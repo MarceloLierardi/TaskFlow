@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taskflow | Tarefas</title>
+    <meta name="description" content="A premium task manager to keep your life organized.">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-elements">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="ph-bold ph-check-square-offset"></i>
+                <h2>Taskflow</h2>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item active">
+                    <i class="ph ph-list-checks"></i>
+                    <span>Minhas Tarefas</span>
+                </a>
+                <a href="dashboard.html" class="nav-item">
+                    <i class="ph ph-chart-pie-slice"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="calendar.html" class="nav-item">
+                    <i class="ph ph-calendar-blank"></i>
+                    <span>Calendário</span>
+                </a>
+                <a href="profile.html" class="nav-item">
+                    <i class="ph ph-user"></i>
+                    <span>Perfil</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-avatar" id="sidebar-user-avatar">?</div>
+                <div class="user-info-mini">
+                    <span class="name" id="sidebar-user-name">Usuário</span>
+                    <span class="role">Membro</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content (Tasks) -->
+        <main class="main-content">
+            <header class="app-header" style="text-align: left; margin-bottom: 2rem;">
+                <h1 style="font-size: 2rem;">Minhas Tarefas</h1>
+                <p class="subtitle">O que você precisa fazer hoje?</p>
+            </header>
+
+            <section class="input-section">
+                <form id="task-form">
+                    <div class="input-wrapper">
+                        <div class="inputs-row" style="display: flex; gap: 0.5rem; flex: 1;">
+                            <input 
+                                type="text" 
+                                id="task-input" 
+                                placeholder="Adicione uma nova tarefa..." 
+                                autocomplete="off"
+                                required
+                                style="flex: 2;"
+                            />
+                            <input 
+                                type="datetime-local" 
+                                id="task-due-date" 
+                                class="date-input"
+                                aria-label="Prazo final"
+                                style="flex: 1;"
+                            />
+                        </div>
+                        <button type="submit" class="add-btn" aria-label="Adicionar Tarefa">
+                            <i class="ph-bold ph-plus"></i>
+                            <span>Adicionar</span>
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="stats-section" style="margin-top: 1.5rem;">
+                <div class="stat-item">
+                    <span class="stat-label">Tarefas criadas</span>
+                    <span class="stat-value" id="created-count">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Concluídas</span>
+                    <span class="stat-value completed-value"><span id="completed-count">0</span> de <span id="total-count">0</span></span>
+                </div>
+            </section>
+
+            <section class="tasks-section" style="margin-top: 1.5rem; flex: 1;">
+                <ul id="task-list" class="task-list">
+                    <!-- Tasks will be injected here via JavaScript -->
+                </ul>
+                <div id="empty-state" class="empty-state">
+                    <i class="ph ph-clipboard-text"></i>
+                    <p>Você ainda não tem tarefas cadastradas</p>
+                    <span>Crie tarefas e organize seus itens a fazer</span>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="auth.js"></script>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = await requireAuth();
+            if (user) {
+                const userName = user.user_metadata?.name || user.email || 'Usuário';
+                document.getElementById('sidebar-user-name').textContent = userName.split(' ')[0];
+                document.getElementById('sidebar-user-avatar').textContent = userName.charAt(0).toUpperCase();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taskflow | Cadastro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-elements">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <main class="app-container auth-container">
+        <header class="app-header">
+            <div class="title-container">
+                <i class="ph ph-user-plus header-icon"></i>
+                <h1>Cadastro</h1>
+            </div>
+            <p class="subtitle">Crie sua conta para começar.</p>
+        </header>
+
+        <form id="register-form" class="auth-form">
+            <div id="error-msg" class="error-message hidden"></div>
+            
+            <div class="input-group">
+                <label for="name">Nome</label>
+                <div class="input-with-icon">
+                    <i class="ph ph-user"></i>
+                    <input type="text" id="name" placeholder="Seu nome" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="email">E-mail</label>
+                <div class="input-with-icon">
+                    <i class="ph ph-envelope"></i>
+                    <input type="email" id="email" placeholder="seu@email.com" required>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label for="password">Senha</label>
+                <div class="input-with-icon">
+                    <i class="ph ph-lock-key"></i>
+                    <input type="password" id="password" placeholder="Sua senha" required minlength="6">
+                </div>
+            </div>
+            
+            <button type="submit" class="auth-submit-btn">Cadastrar</button>
+        </form>
+        
+        <div class="auth-footer">
+            <p>Já tem uma conta? <a href="login.html">Faça login</a></p>
+        </div>
+    </main>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            await requireNoAuth();
+
+            const registerForm = document.getElementById('register-form');
+            const errorMsg = document.getElementById('error-msg');
+
+            registerForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+
+                const result = await registerUser(name, email, password);
+
+                if (result.success) {
+                    window.location.href = 'index.html'; // Redireciona para o app após cadastro
+                } else {
+                    errorMsg.textContent = result.message;
+                    errorMsg.classList.remove('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

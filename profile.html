@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taskflow | Perfil</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-elements">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="ph-bold ph-check-square-offset"></i>
+                <h2>Taskflow</h2>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <i class="ph ph-list-checks"></i>
+                    <span>Minhas Tarefas</span>
+                </a>
+                <a href="dashboard.html" class="nav-item">
+                    <i class="ph ph-chart-pie-slice"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="calendar.html" class="nav-item">
+                    <i class="ph ph-calendar-blank"></i>
+                    <span>Calendário</span>
+                </a>
+                <a href="profile.html" class="nav-item active">
+                    <i class="ph ph-user"></i>
+                    <span>Perfil</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-avatar" id="sidebar-user-avatar">?</div>
+                <div class="user-info-mini">
+                    <span class="name" id="sidebar-user-name">Usuário</span>
+                    <span class="role">Membro</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content (Profile) -->
+        <main class="main-content">
+            <header class="app-header" style="text-align: left; margin-bottom: 2rem;">
+                <h1 style="font-size: 2rem;">Meu Perfil</h1>
+                <p class="subtitle">Gerencie suas informações.</p>
+            </header>
+
+            <section class="profile-section">
+                <div class="profile-header">
+                    <div class="profile-avatar-large" id="profile-avatar">?</div>
+                    <div class="profile-info">
+                        <h2 id="profile-name">Nome do Usuário</h2>
+                        <p id="profile-email">email@exemplo.com</p>
+                    </div>
+                </div>
+
+                <div class="profile-details">
+                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                        <strong>Membro desde:</strong> <span id="profile-date">-</span>
+                    </p>
+                    
+                    <div style="display: flex; gap: 1rem;">
+                        <button class="logout-btn" onclick="logoutUser()">
+                            <i class="ph-bold ph-sign-out"></i>
+                            Sair da conta
+                        </button>
+                        
+                        <button class="logout-btn" style="color: var(--danger-hover); border-color: var(--danger-hover);" onclick="deleteAccount()">
+                            <i class="ph-bold ph-trash"></i>
+                            Excluir conta
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = await requireAuth();
+            
+            if (user) {
+                // Preencher dados na sidebar
+                const userName = user.user_metadata?.name || user.email || 'Usuário';
+                const firstName = userName.split(' ')[0];
+                const initial = userName.charAt(0).toUpperCase();
+                
+                document.getElementById('sidebar-user-name').textContent = firstName;
+                document.getElementById('sidebar-user-avatar').textContent = initial;
+                
+                // Preencher dados no perfil principal
+                document.getElementById('profile-avatar').textContent = initial;
+                document.getElementById('profile-name').textContent = userName;
+                document.getElementById('profile-email').textContent = user.email;
+                
+                // Formatar data
+                if (user.createdAt) {
+                    const date = new Date(user.createdAt);
+                    document.getElementById('profile-date').textContent = date.toLocaleDateString('pt-BR');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

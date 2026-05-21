@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taskflow | Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-elements">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="ph-bold ph-check-square-offset"></i>
+                <h2>Taskflow</h2>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <i class="ph ph-list-checks"></i>
+                    <span>Minhas Tarefas</span>
+                </a>
+                <a href="dashboard.html" class="nav-item active">
+                    <i class="ph ph-chart-pie-slice"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="calendar.html" class="nav-item">
+                    <i class="ph ph-calendar-blank"></i>
+                    <span>Calendário</span>
+                </a>
+                <a href="profile.html" class="nav-item">
+                    <i class="ph ph-user"></i>
+                    <span>Perfil</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-avatar" id="sidebar-user-avatar">?</div>
+                <div class="user-info-mini">
+                    <span class="name" id="sidebar-user-name">Usuário</span>
+                    <span class="role">Membro</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content (Dashboard) -->
+        <main class="main-content">
+            <header class="app-header" style="text-align: left; margin-bottom: 2rem;">
+                <h1 style="font-size: 2rem;">Dashboard</h1>
+                <p class="subtitle">Visão geral do seu progresso.</p>
+            </header>
+
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <div class="stat-icon purple">
+                        <i class="ph-fill ph-files"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3 id="dash-total">0</h3>
+                        <p>Total de Tarefas</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <i class="ph-fill ph-check-circle"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3 id="dash-completed">0</h3>
+                        <p>Tarefas Concluídas</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon red">
+                        <i class="ph-fill ph-clock-countdown"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3 id="dash-pending">0</h3>
+                        <p>Tarefas Pendentes</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(14,165,233,0.15); color: #0ea5e9;">
+                        <i class="ph-fill ph-trend-up"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3 id="dash-rate">0%</h3>
+                        <p>Taxa de Conclusão</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="empty-state" style="margin-top: 3rem;">
+                <i class="ph ph-chart-bar"></i>
+                <p>Mantenha o ritmo!</p>
+                <span>Sua produtividade em um relance.</span>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = await requireAuth();
+            
+            if (user) {
+                const userName = user.user_metadata?.name || user.email || 'Usuário';
+                document.getElementById('sidebar-user-name').textContent = userName.split(' ')[0];
+                document.getElementById('sidebar-user-avatar').textContent = userName.charAt(0).toUpperCase();
+                
+                // Carregar estatísticas
+                const allTasks = JSON.parse(localStorage.getItem('taskflow_tasks')) || [];
+                const userTasks = allTasks.filter(t => t.userId === user.id);
+                
+                const total = userTasks.length;
+                const completed = userTasks.filter(t => t.completed).length;
+                const pending = total - completed;
+                const rate = total === 0 ? 0 : Math.round((completed / total) * 100);
+                
+                document.getElementById('dash-total').textContent = total;
+                document.getElementById('dash-completed').textContent = completed;
+                document.getElementById('dash-pending').textContent = pending;
+                document.getElementById('dash-rate').textContent = `${rate}%`;
+            }
+        });
+    </script>
+</body>
+</html>
